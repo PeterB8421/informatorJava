@@ -224,7 +224,7 @@ public class mainWindow extends javax.swing.JFrame {
 
 	private boolean dbConnected() {
 		try {
-			databaseConnection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/multilangdict?useUnicode=true&characterEncoding=utf-8", "root", "");
+			databaseConnection = (Connection) DriverManager.getConnection("jdbc:mysql://localhost/multilangdict?useUnicode=true&characterEncoding=utf-8", "mld", "multilangdict");
 			return true;
 		} catch (SQLException ex) {
 			JOptionPane.showMessageDialog(this, "Nepodařilo se připojit k databázi. Java hlásí chybu \"" + ex + "\"", "Chyba", JOptionPane.ERROR_MESSAGE);
