@@ -10,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -51,7 +53,7 @@ public class mainWindow extends javax.swing.JFrame {
         searchedString = new javax.swing.JTextField();
         find = new javax.swing.JButton();
         addLangBtn = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        deleteLangBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vícejazyčný slovník");
@@ -114,7 +116,12 @@ public class mainWindow extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Odebrat jazyk");
+        deleteLangBtn.setText("Odebrat jazyk");
+        deleteLangBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteLangBtnActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -140,7 +147,7 @@ public class mainWindow extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(addLangBtn)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton2)))
+                        .addComponent(deleteLangBtn)))
                 .addContainerGap(393, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -159,7 +166,7 @@ public class mainWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addLangBtn)
-                    .addComponent(jButton2))
+                    .addComponent(deleteLangBtn))
                 .addContainerGap(16, Short.MAX_VALUE))
         );
 
@@ -210,8 +217,30 @@ public class mainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_findActionPerformed
 
     private void addLangBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addLangBtnActionPerformed
-		String lang = JOptionPane.showInputDialog(this, "Zadejte zkratku jazyka");
+            try {
+                String lang = JOptionPane.showInputDialog(this, "Zadejte zkratku jazyka");
+                lang.replace("\'", "");
+                PreparedStatement dotaz = databaseConnection.prepareStatement("ALTER TABLE words ADD COLUMN ? VARCHAR(100)");
+                dotaz.setString(1, lang);
+                dotaz.executeUpdate();
+            } catch (SQLException ex) {
+                Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
+                JOptionPane.showMessageDialog(this, "Nepodařilo se provést dotaz.", "Chyba", JOptionPane.ERROR_MESSAGE);
+            }
     }//GEN-LAST:event_addLangBtnActionPerformed
+
+    private void deleteLangBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteLangBtnActionPerformed
+        /*try{
+            String lang = JOptionPane.showInputDialog(this, "Zadejte zkratku jazyka");
+            PreparedStatement dotaz = databaseConnection.prepareStatement("ALTER TABLE words ADD COLUMN ? VARCHAR(100)");
+            dotaz.setString(1, lang);
+            dotaz.executeQuery();
+        }
+        catch(SQLException ex){
+            Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
+            JOptionPane.showMessageDialog(this, "Nepodařilo se provést dotaz.", "Chyba", JOptionPane.ERROR_MESSAGE);
+        }*/
+    }//GEN-LAST:event_deleteLangBtnActionPerformed
 
 	/**
 	 * @param args the command line arguments
@@ -356,9 +385,9 @@ public class mainWindow extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addLangBtn;
     private javax.swing.JButton delete;
+    private javax.swing.JButton deleteLangBtn;
     private javax.swing.JButton find;
     private javax.swing.JButton insert;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
