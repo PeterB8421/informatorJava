@@ -11,6 +11,10 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -22,6 +26,7 @@ public class mainWindow extends javax.swing.JFrame {
 
     private final DefaultTableModel model;
     private Connection databaseConnection;
+    private DetailedArticle detailedArticle;
 
     /**
      * Creates new form mainWindow
@@ -50,6 +55,8 @@ public class mainWindow extends javax.swing.JFrame {
         insert = new javax.swing.JButton();
         update = new javax.swing.JButton();
         delete = new javax.swing.JButton();
+        detailedViewBtn = new javax.swing.JButton();
+        exitBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Vícejazyčný slovník");
@@ -96,18 +103,39 @@ public class mainWindow extends javax.swing.JFrame {
             }
         });
 
+        detailedViewBtn.setText("Podrobně zobrazit vybraný článek");
+        detailedViewBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                detailedViewBtnActionPerformed(evt);
+            }
+        });
+
+        exitBtn.setText("Ukončit");
+        exitBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitBtnActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(insert)
-                .addGap(18, 18, 18)
-                .addComponent(update)
-                .addGap(18, 18, 18)
-                .addComponent(delete)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(insert)
+                        .addGap(18, 18, 18)
+                        .addComponent(update)
+                        .addGap(18, 18, 18)
+                        .addComponent(delete))
+                    .addComponent(detailedViewBtn))
                 .addContainerGap(519, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(exitBtn)
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -117,7 +145,11 @@ public class mainWindow extends javax.swing.JFrame {
                     .addComponent(insert)
                     .addComponent(update)
                     .addComponent(delete))
-                .addContainerGap(105, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(detailedViewBtn)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(exitBtn)
+                .addContainerGap())
         );
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.CENTER);
@@ -163,6 +195,31 @@ public class mainWindow extends javax.swing.JFrame {
         deleteRecord(id);
         listData(this.getAllRecords());
     }//GEN-LAST:event_deleteActionPerformed
+
+    private void detailedViewBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_detailedViewBtnActionPerformed
+        this.detailedArticle = new DetailedArticle(this, true);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+        java.util.Date uDate = null;
+        try {
+            uDate = sdf1.parse(table.getModel().getValueAt(table.getSelectedRow(), 3).toString());
+        } catch (ParseException ex) {
+            Logger.getLogger(mainWindow.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        java.sql.Date date = new java.sql.Date(uDate.getTime());
+        detailedArticle.setStrings(new Article(
+                table.getModel().getValueAt(table.getSelectedRow(), 1).toString(),
+                table.getModel().getValueAt(table.getSelectedRow(), 2).toString(),
+                date,
+                ((table.getModel().getValueAt(table.getSelectedRow(), 4).toString())=="1"),
+                table.getModel().getValueAt(table.getSelectedRow(), 5).toString()
+        ));
+        this.detailedArticle.showDialog();
+    }//GEN-LAST:event_detailedViewBtnActionPerformed
+
+    private void exitBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitBtnActionPerformed
+        // TODO add your handling code here:
+        System.exit(0);
+    }//GEN-LAST:event_exitBtnActionPerformed
 
     /**
      * @param args the command line arguments
@@ -304,6 +361,8 @@ public class mainWindow extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton delete;
+    private javax.swing.JButton detailedViewBtn;
+    private javax.swing.JButton exitBtn;
     private javax.swing.JButton insert;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
